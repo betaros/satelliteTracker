@@ -47,7 +47,16 @@ def satellite(st):
 
     satellite_json.close()
 
-    cat_id = [int(norad_id_list[0][1])]
+    for idx, x in enumerate(norad_id_list):
+        print(idx, ": ", x[0])
+
+    selected_satellite = 0
+    if len(norad_id_list) > 1:
+        selected_satellite = int(input("Number: "))
+
+    cat_id = [int(norad_id_list[selected_satellite][1])]
+
+    print("Satellite: ", norad_id_list[selected_satellite][0])
 
     data = st.tle_latest(norad_cat_id=cat_id, ordinal=1, format='3le')
     tle = data.split("\n")
