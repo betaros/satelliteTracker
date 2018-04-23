@@ -17,6 +17,7 @@ def init():
     """
     spacetrack_login = Path("./credits.txt")
     if not spacetrack_login.is_file():
+        print("Please enter your credentials for space-track.org")
         store_credits()
 
     credit_list = load_credits()
@@ -24,7 +25,9 @@ def init():
 
     satellite_file = Path("./satellitelist.json")
     if not satellite_file.is_file():
+        print("Downloading satellite list. Please wait ...")
         satellite_list(st)
+        print("Download finished.")
     track_times(st)
 
 
@@ -78,7 +81,8 @@ def satellite_list(st):
         if x[0] is "\"":
             file.write("\t")
         file.write(x)
-        file.write(",\n")
+        if ']' not in x:
+            file.write(",\n")
 
     file.close()
 
@@ -96,6 +100,8 @@ def ground_station():
 
     with urllib.request.urlopen(url_str) as url:
         data = json.loads(url.read().decode())
+        if not data:
+            return;
         ground.lat, ground.lon = data[0]['lat'], data[0]['lon']
         print(data[0]['display_name'] + "\n")
 
@@ -114,6 +120,10 @@ def track_times(st):
         return
 
     ground = ground_station()
+    if not ground:
+        print("Unable to find ground station.")
+        return
+
     result_list = []
 
     for x in range(0, 24):
